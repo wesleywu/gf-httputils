@@ -19,27 +19,27 @@ type Response struct {
 	Data interface{} `json:"data"`
 }
 
-func Success(r *ghttp.Request, data ...interface{}) {
+func Success(r *ghttp.Request, data interface{}) {
 	Result(r, SuccessCode, "success", data)
 }
 
-func Failed(r *ghttp.Request, message string, data ...interface{}) {
-	Result(r, ErrorCode, message, data)
+func SuccessWithMessage(r *ghttp.Request, message string, data interface{}) {
+	Result(r, SuccessCode, message, data)
 }
 
-func FailedWithCode(r *ghttp.Request, code int, message string, data ...interface{}) {
-	Result(r, code, message, data)
+func Failed(r *ghttp.Request, message string) {
+	Result(r, ErrorCode, message, nil)
 }
 
-func Result(r *ghttp.Request, code int, message string, data ...interface{}) {
-	responseData := interface{}(nil)
-	if len(data) > 0 {
-		responseData = data[0]
-	}
+func FailedWithCode(r *ghttp.Request, code int, message string) {
+	Result(r, code, message, nil)
+}
+
+func Result(r *ghttp.Request, code int, message string, data interface{}) {
 	response := &Response{
 		Code:    code,
 		Message: message,
-		Data:    responseData,
+		Data:    data,
 	}
 	r.SetParam("apiReturnRes", response)
 	err := r.Response.WriteJson(response)
