@@ -1,7 +1,6 @@
 package jsonresponse
 
 import (
-	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/net/ghttp"
 )
 
@@ -42,9 +41,6 @@ func Result(r *ghttp.Request, code int, message string, data interface{}) {
 		Data:    data,
 	}
 	r.SetParam("apiReturnRes", response)
-	err := r.Response.WriteJson(response)
-	if err != nil {
-		g.Log().Error(r.Context(), err.Error())
-	}
+	r.Response.WriteJson(response)
 	r.Exit()
 }
