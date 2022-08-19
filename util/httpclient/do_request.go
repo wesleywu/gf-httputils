@@ -2,6 +2,7 @@ package httpclient
 
 import (
 	"context"
+	"errors"
 	"github.com/gogf/gf/v2/frame/g"
 	"github.com/gogf/gf/v2/os/gctx"
 	"github.com/gogf/gf/v2/text/gstr"
@@ -281,7 +282,9 @@ func execRequest(ctx context.Context, client *http.Client, req *http.Request) (*
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		g.Log().Error(ctx, err)
+		if !errors.Is(err, context.DeadlineExceeded) {
+			g.Log().Error(ctx, err)
+		}
 		return nil, err
 	}
 	return &HttpResponse{
