@@ -2,7 +2,7 @@ module github.com/WesleyWu/gf-httputils
 
 go 1.18
 
-require github.com/gogf/gf/v2 v2.1.2
+require github.com/gogf/gf/v2 v2.1.4
 
 require (
 	github.com/BurntSushi/toml v1.1.0 // indirect
