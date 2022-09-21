@@ -13,8 +13,12 @@ import (
 )
 
 const (
-	MethodGet  = "GET"
-	MethodPost = "POST"
+	MethodGet     = "GET"
+	MethodPost    = "POST"
+	MethodPut     = "PUT"
+	MethodDelete  = "DELETE"
+	MethodOptions = "OPTIONS"
+	MethodHead    = "HEAD"
 )
 
 type Client struct {
@@ -78,12 +82,12 @@ func (c *Client) Exec(ctx context.Context, request *HttpRequest) (result *HttpRe
 	for i := 0; i < retryCount; i++ {
 		result, err = execRequest(ctx, c.HttpClient, req)
 		if err == nil {
-			return result, nil
+			return
 		}
 		g.Log().Debugf(ctx, "%d times retry get %s", i+1, request.Url)
 	}
 	g.Log().Warningf(ctx, "aborting after retried %d times for %s", retryCount, request.Url)
-	return nil, nil
+	return
 }
 
 // DoGet GET方式访问URL，获取结果，是Exec的快捷方法
@@ -266,6 +270,374 @@ func (c *Client) DoPostWithHeadersAndCookies(ctx context.Context, url string, he
 		Headers:    headers,
 		Cookies:    cookies,
 		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoPut Put方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoPut(ctx context.Context, url string, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodPut,
+		Url:        url,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoPutWithHeaders Put方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoPutWithHeaders(ctx context.Context, url string, headers *http.Header, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodPut,
+		Url:        url,
+		Headers:    headers,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoPutWithCookies Put方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	cookies        请求的Http cookies
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoPutWithCookies(ctx context.Context, url string, cookies []*http.Cookie, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodPut,
+		Url:        url,
+		Cookies:    cookies,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoPutWithHeadersAndCookies Put方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	cookies        请求的Http cookies
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoPutWithHeadersAndCookies(ctx context.Context, url string, headers *http.Header, cookies []*http.Cookie, body string, retryCount int) (
+	result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodPut,
+		Url:        url,
+		Headers:    headers,
+		Cookies:    cookies,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoDelete Delete方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoDelete(ctx context.Context, url string, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodDelete,
+		Url:        url,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoDeleteWithHeaders Delete方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoDeleteWithHeaders(ctx context.Context, url string, headers *http.Header, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodDelete,
+		Url:        url,
+		Headers:    headers,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoDeleteWithCookies Delete方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	cookies        请求的Http cookies
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoDeleteWithCookies(ctx context.Context, url string, cookies []*http.Cookie, body string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodDelete,
+		Url:        url,
+		Cookies:    cookies,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoDeleteWithHeadersAndCookies Delete方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	cookies        请求的Http cookies
+//	body           请求的Http body
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoDeleteWithHeadersAndCookies(ctx context.Context, url string, headers *http.Header, cookies []*http.Cookie, body string, retryCount int) (
+	result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodDelete,
+		Url:        url,
+		Headers:    headers,
+		Cookies:    cookies,
+		Body:       body,
+		RetryCount: retryCount,
+	})
+}
+
+// DoOptions Options方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoOptions(ctx context.Context, url string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodOptions,
+		Url:        url,
+		RetryCount: retryCount,
+	})
+}
+
+// DoOptionsWithHeaders Options方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoOptionsWithHeaders(ctx context.Context, url string, headers *http.Header, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodOptions,
+		Url:        url,
+		Headers:    headers,
+		RetryCount: retryCount,
+	})
+}
+
+// DoOptionsWithCookies Options方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	cookies        请求的Http cookies
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoOptionsWithCookies(ctx context.Context, url string, cookies []*http.Cookie, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodOptions,
+		Url:        url,
+		Cookies:    cookies,
+		RetryCount: retryCount,
+	})
+}
+
+// DoOptionsWithHeadersAndCookies Options方式访问URL，获取结果，是Exec的快捷方法
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	cookies        请求的Http cookies
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoOptionsWithHeadersAndCookies(ctx context.Context, url string, headers *http.Header, cookies []*http.Cookie, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodOptions,
+		Url:        url,
+		Headers:    headers,
+		Cookies:    cookies,
+		RetryCount: retryCount,
+	})
+}
+
+// DoHead Head方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoHead(ctx context.Context, url string, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodHead,
+		Url:        url,
+		RetryCount: retryCount,
+	})
+}
+
+// DoHeadWithHeaders Head方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoHeadWithHeaders(ctx context.Context, url string, headers *http.Header, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodHead,
+		Url:        url,
+		Headers:    headers,
+		RetryCount: retryCount,
+	})
+}
+
+// DoHeadWithCookies Head方式访问URL，获取结果，是Exec的快捷方法
+//
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	cookies        请求的Http cookies
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoHeadWithCookies(ctx context.Context, url string, cookies []*http.Cookie, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodHead,
+		Url:        url,
+		Cookies:    cookies,
+		RetryCount: retryCount,
+	})
+}
+
+// DoHeadWithHeadersAndCookies Head方式访问URL，获取结果，是Exec的快捷方法
+// 传入参数：
+//
+//	ctx
+//	url            要访问的url
+//	header         请求的Http header
+//	cookies        请求的Http cookies
+//	retryCount     重试次数，如为-1则无限重试
+//
+// 返回参数
+//
+//	result         HttpResponse结构体
+//	err            错误
+func (c *Client) DoHeadWithHeadersAndCookies(ctx context.Context, url string, headers *http.Header, cookies []*http.Cookie, retryCount int) (result *HttpResponse, err error) {
+	return c.Exec(ctx, &HttpRequest{
+		Method:     MethodHead,
+		Url:        url,
+		Headers:    headers,
+		Cookies:    cookies,
 		RetryCount: retryCount,
 	})
 }
